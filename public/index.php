@@ -7,7 +7,8 @@ try {
     $loader->registerDirs(
         array(
             '../app/controllers/',
-            '../app/models/'
+            '../app/models/',
+            '../app/logic/',
         )
     )->register();
 
@@ -15,12 +16,13 @@ try {
     $di = new Phalcon\DI\FactoryDefault();
 
     //Set the database service
-    $di->set('db', function(){
+    $config = new Phalcon\Config\Adapter\Ini('../app/config/application.ini');
+    $di->set('db', function() use ($config) {
         return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-            "host" => "localhost",
-            "username" => "root",
-            "password" => "secret",
-            "dbname" => "test_db"
+            "host" => $config->database->host, 
+            "username" => $config->database->username,
+            "password" => $config->database->password,
+            "dbname" => $config->database->name
         ));
     });
 
